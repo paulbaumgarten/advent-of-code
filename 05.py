@@ -1,3 +1,4 @@
+import time
 
 class Line:
     def __init__(self, init_data):
@@ -28,6 +29,8 @@ class Line:
         return self.x1 != self.x2 and self.y1 != self.y2 and abs(self.x1-self.x2)==abs(self.y1-self.y2)
 
 # Read input data
+start = time.time()
+
 with open("05.txt", "r") as f:
     data = f.read().splitlines()
 
@@ -67,7 +70,7 @@ for l in lines:
             for y in range(l.y1, l.y2-1, -1):
                 grid[y][l.x1] += 1
     if l.is_diagonal():
-        print(l)
+        #print(l)
         dx,dy = 1,1
         if l.x1 > l.x2: dx = -1
         if l.y1 > l.y2: dy = -1
@@ -81,8 +84,8 @@ for l in lines:
         grid[y][x] += 1 # One more to do when it is equal to the end point
 
 # Print grid
-for i in range(0, len(grid)):
-    print(grid[i])
+#for i in range(0, len(grid)):
+#    print(grid[i])
 
 # Count points >= 2
 points = 0
@@ -91,3 +94,4 @@ for y in range(0, len(grid)):
         if grid[y][x] >= 2:
             points += 1
 print(points)
+print(time.time() - start)
