@@ -17,7 +17,7 @@ int* inputIntegers(int& integers_size) {
     while (si<s.length() && si>=0) {
         int comma = s.find(',', si);
         integers[ai] = stoi(s.substr(si,comma));
-        si = comma >0 ? comma+1 : s.length();
+        si = comma > 0 ? comma+1 : s.length();
         ai++;
     } 
     return integers;
@@ -34,7 +34,7 @@ int main() {
         lanternfish[ data[i] ]++;
     }
 
-    // Run the lanternfish through their spwaning cycle for given number of days
+    // Run the lanternfish through their spawning cycle for given number of days
     int numDays = 256;
     for (int day=0; day<numDays; day++) {
         unsigned long long spawning = lanternfish[0]; // How many are about to spawn?
