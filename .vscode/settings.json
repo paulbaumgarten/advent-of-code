@@ -6,6 +6,8 @@
         "string": "cpp",
         "string_view": "cpp",
         "vector": "cpp",
-        "chrono": "cpp"
+        "chrono": "cpp",
+        "__tuple": "cpp",
+        "tuple": "cpp"
     }
 }
