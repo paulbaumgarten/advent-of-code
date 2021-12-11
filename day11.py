@@ -16,13 +16,12 @@ def flash(data, row, col):
     flashes = 0
     # Valid position?
     if row >= 0 and row < len(data) and col >= 0 and col < len(data[row]):
-        #print_state(data,f"flash for {row},{col} start")
         if data[row][col] > 0: # Haven't flashed yet, increase our energy level
             data[row][col] += 1
         if data[row][col] > 9: # flash!
             data[row][col] = 0
-            # Part 2 hackery - if everything is zero terminate the program
-            if sum( [ sum(n) for n in data ]) == 0:
+            # Part 2 hackery - if everything is zero, all octopuses are flashing. Terminate the program
+            if sum([ sum(n) for n in data ]) == 0:
                 print("ALL FLASH!!")
                 exit()
             flashes += 1
@@ -38,14 +37,14 @@ def flash(data, row, col):
 
 def step(data):
     flashes = 0
-    # Increase energy levels by 1
+    # Increase everybody's energy levels by 1
     for row in range(0, len(data)):
         for col in range(0, len(data[row])):
             data[row][col] += 1
-    # Energy > 9 results in a flash
+    # Detect and process flashes
     for row in range(0, len(data)):
         for col in range(0, len(data[row])):
-            if data[row][col] > 9: # Flash
+            if data[row][col] > 9: # Energy > 9 results in a flash
                 flashes += flash(data, row, col)
     return flashes
 
