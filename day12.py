@@ -62,7 +62,7 @@ yq-YA
 end-JS"""
 ]
 
-import time
+import time, json
 
 # Solutions: 10, 19, 226, unknown
 
@@ -74,12 +74,7 @@ def visit(graph, location, path_to_here=[]):
     else:
         for next_stop in graph[location]:
             if next_stop != "start":
-                if next_stop.isupper():
-                    print(path_to_here)
-                    path_to_here.append(next_stop)
-                    paths += visit(graph, next_stop, path_to_here)
-                    path_to_here.pop()
-                elif next_stop not in path_to_here:
+                if next_stop.isupper() or (next_stop not in path_to_here):
                     print(path_to_here)
                     path_to_here.append(next_stop)
                     paths += visit(graph, next_stop, path_to_here)
@@ -94,20 +89,15 @@ def visit2(graph, location, small_visit=False, path_to_here=[]):
     else:
         for next_stop in graph[location]:
             if next_stop != "start":
-                if next_stop.isupper():
-                    print(path_to_here)
+                if next_stop.isupper() or (small_visit and (next_stop not in path_to_here)):
+                    #print(path_to_here)
                     path_to_here.append(next_stop)
                     paths += visit2(graph, next_stop, small_visit, path_to_here)
                     path_to_here.pop()            
-                elif (small_visit) and (next_stop not in path_to_here):
-                    print(path_to_here)
-                    path_to_here.append(next_stop)
-                    paths += visit2(graph, next_stop, small_visit, path_to_here)
-                    path_to_here.pop()
                 elif (not small_visit):
                     if next_stop in path_to_here:
                         small_visit = True
-                    print(path_to_here)
+                    #print(path_to_here)
                     path_to_here.append(next_stop)
                     paths += visit2(graph, next_stop, small_visit, path_to_here)
                     small_visit = False
@@ -129,7 +119,7 @@ def builddata(data):
     return output
 
 g = builddata(indata[3])
-print(g)
+print(json.dumps(g, indent=3))
 result = visit2(g, 'start')
 print(result)
 
