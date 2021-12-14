@@ -1,4 +1,5 @@
 # Day 13
+# 2d array reflections
 
 # Parse data
 with open("day13.txt", "r") as f:
@@ -30,7 +31,6 @@ def print_paper(paper):
         print()
     print()
 
-# Part 1
 def plot_points(paper, coords):
     for c in coords:
         paper[c[1]][c[0]] = '#'
@@ -38,11 +38,11 @@ def plot_points(paper, coords):
 def create_paper(x,y):
     return [['.' for i in range(0, x)] for j in range(0, y)]
 
+# Let's go! Part 1 & 2
+
 paper = create_paper(maxx+1, maxy+1)
 plot_points(paper, coords)
-print_paper(paper)
-#instr = instrs[0]
-#if True:
+
 for instr in instrs:
     xy, fold = instr
     if xy == 'y':
@@ -63,7 +63,6 @@ for instr in instrs:
                 if paper[y][ fold*2 - x ] == '#':
                     paper2[y][x] = paper[y][ fold*2 - x ]
         paper = paper2
-    print_paper(paper)
-
-dots = sum([row.count('#') for row in paper])
-print(dots)
+    dots = sum([row.count('#') for row in paper])
+    print("Dots",dots)
+print_paper(paper)
