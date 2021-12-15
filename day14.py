@@ -65,26 +65,35 @@ def part2(sequence, generations):
     print(generational_pair_counts)
     # Populate the structure
     print("Populating the structure")
+    # For each generation...
     for i in range(1,generations):
-        # Add the pair_counts for the two pairs from the previous generation
+        # For every pair permutation...
         for k,v in generational_pair_counts[i].items():
+
             # k is the current pair, eg: NN
             # v is all the values of the counts that pair produces at this number of generations in
+            # Determine what letter this pair would spawn
             letter_spawned = pairs[k]
+            # Determine what two pairs would be spawned from this letter
             pair1 = k[0]+letter_spawned
             pair2 = letter_spawned+k[1]
+            # Lookup the totals for each of these new pairs from the previous generation
             pair1_counts = generational_pair_counts[i-1][pair1]
             pair2_counts = generational_pair_counts[i-1][pair2]
+            # For each previous generational total, add it to the letter value for this generation & pair permutation
             for letter,count in pair1_counts.items():
                 generational_pair_counts[i][k][letter] += count
             for letter,count in pair2_counts.items():
                 generational_pair_counts[i][k][letter] += count
         print("generation",i, generational_pair_counts[i])
-    # Now traverse the sequence
+    # Now traverse the sequence...
     print("Traversing the sequence")
+    # Create zero counts for each letter
     final_counts = counts.copy()
+    # For every pair of letters in the sequence
     for i in range(0, len(sequence)-1):
         pair = sequence[i:i+2]
+        # Copy across the final generation's letter counts for this pair
         for letter,count in generational_pair_counts[generations-1][pair].items():
             final_counts[letter] += count
         final_counts[sequence[i]] += 1
