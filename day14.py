@@ -3,7 +3,7 @@
 
 import time
 
-with open("day14a.txt", "r") as f:
+with open("day14.txt", "r") as f:
     data = f.read().splitlines()
 
 # Set up the data
@@ -31,6 +31,7 @@ def part1(depth):
             counts[pairs[pair]] += 1
         sequence = new_seq + sequence[p]
         print(i, counts)
+        print(sequence)
     print(counts)
 
 # Task 2
@@ -94,16 +95,43 @@ def part2(sequence, generations):
     n = min(final_counts.values())
     print(m-n)
 
+def part2_better(sequence, generations):
+    pair_counts = {k:0 for k,v in pairs.items()}
+    # Load the initial pair counts from the sequence
+    for i in range(0, len(sequence)-1):
+        pair = sequence[i:i+2]
+        pair_counts[pair] += 1
+    # Run through all pairs for generation number of times, incrementing the pairs they spawn
+    for i in range(1, generations+1):
+        new_pairs = []
+        for pair,count in pair_counts.items():
+            if count > 0:
+                new_letter = pairs[ pair ]
+                new_pairs.append((pair[0] + new_letter, count))
+                new_pairs.append((new_letter + pair[1], count))
+                pair_counts[pair] -= count # Remove this pair as it is being broken up
+        for j in range(0, len(new_pairs)):
+            new_pair, count = new_pairs[j]
+            pair_counts[ new_pair ] += count
+    # Create letter counts
+    for pair, count in pair_counts.items():
+        counts[pair[0]] += count
+    counts[sequence[-1]] += 1
+    print(pair_counts)
+    print(counts)
 
 start = time.time()
 
-# part1(20)
+# part1(4)
 
 #for p in range(0, len(sequence)-1):
 #    print(f"p:{p} {(time.time()-start)}")
 #    part2(sequence[p:p+2], 25)
 
-part2(sequence, 10)
+# part2(sequence, 10)
+
+part2_better(sequence, 40)
+
 
 m = max(counts.values())
 n = min(counts.values())
