@@ -18,4 +18,4 @@ https://adventofcode.com/2021
 * Day 14 - Extended Polymerization - Exponential growth (see day 6)
 * Day 15 - Dijkstra pathfinding
 * Day 16 - Binary parsing
-
+* Day 17 - 
