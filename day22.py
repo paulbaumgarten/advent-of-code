@@ -3,10 +3,6 @@
 from __future__ import annotations
 import time, math
 
-### PART 1
-# Test data answer 590784
-# Input data answer 652209
-
 with open("day22a.txt","r") as f:
     data = f.read().splitlines()
 
@@ -109,10 +105,7 @@ class Cube:
         #print("check", total)
         return parts
 
-def part2(data):
-    # Test data answer 2758514936282235
-    # Input data answer ?
-
+def part2parse(data, all=False):
     cuboids = []
     total = 0
     for instruction in data:
@@ -133,12 +126,22 @@ def part2(data):
             y1,y2 = y2,y1
         if z1 > z2:
             z1,z2 = z2,z1
-        if x1 >= -50 and x1 <= 50 and y1 >= -50 and y1 <= 50 and z1 >= -50 and z1 <= 50 and \
+        if all:
+            c = Cube(x1,x2,y1,y2,z1,z2)
+            c.inst = inst
+            cuboids.append(c)
+        elif x1 >= -50 and x1 <= 50 and y1 >= -50 and y1 <= 50 and z1 >= -50 and z1 <= 50 and \
             x2 >= -50 and x2 <= 50 and y2 >= -50 and y2 <= 50 and z2 >= -50 and z2 <= 50 :
             c = Cube(x1,x2,y1,y2,z1,z2)
             c.inst = inst
             cuboids.append(c)
     print(f"There are {len(cuboids)} cubes")
+    return cuboids
+
+def part2(data):
+    # Test data answer 2758514936282235
+    # Input data answer ?
+    cuboids = part2parse(data)
     counter = 0
     i = 0
     batch_start = 0
@@ -185,12 +188,107 @@ def part2(data):
             print("Adding cube",c,cuboids[c])
             total += cuboids[c].volume()
     print(total)
-# part1(data)
-part2(data)
 
-#c = Cube(0, 10, 0, 10, 0, 10)
-#d = Cube(-10, -5, 3, 5, 3, 5)
-#print(c.intersecting_volume(d))
-#parts = c.remove_cube(d)
-#for p in parts:
-#    print(p)
+def part2again(data):
+    c = part2parse(data, all=False)
+    # Print the cubes
+    mi = 0
+    ma = 0
+    for i in range(len(c)):
+        mi = min(mi, c[i].x1, c[i].y1, c[i].z1)
+        ma = max(ma, c[i].x2, c[i].y2, c[i].z2)
+        # print("Cube",i,":",c[i])
+    print("Coordinate range from ",mi, "to", ma, "range of ",(ma-mi))
+
+    # Determine coordinate box boundaries
+    x = []
+    y = []
+    z = []
+    for i in range(len(c)):
+        if c[i].x1 not in x: x.append(c[i].x1)
+        if c[i].x2 not in x: x.append(c[i].x2)
+        if c[i].y1 not in y: y.append(c[i].y1)
+        if c[i].y2 not in y: y.append(c[i].y2)
+        if c[i].z1 not in z: z.append(c[i].z1)
+        if c[i].z2 not in z: z.append(c[i].z2)
+        if c[i].x1 == c[i].x2: print(f"x1==x2 item {i}")
+        if c[i].y1 == c[i].y2: print(f"y1==y2 item {i}")
+        if c[i].z1 == c[i].z2: print(f"z1==z2 item {i}")
+    x.sort()
+    y.sort()
+    z.sort()
+    # The outermost values must also get counted, so we'll need boxes for them.
+    x.append(max(x)+1)
+    y.append(max(y)+1)
+    z.append(max(z)+1)
+    size = len(x) * len(y) * len(z)
+    print(f"x: {len(x)} items, y: {len(y)} items, z: {len(z)} items = {size} boxes")
+    # Allocate the memory
+    boxes = [0] * size
+    print(f"Allocated {size} boxes")
+    # For all cuboids...
+    cache = []
+    for i in range(len(c)):
+        print(f"Processing box {i} of {len(c)}: ",c[i])
+        cube = c[i]
+        my_x_boxes = []
+        my_y_boxes = []
+        my_z_boxes = []
+        # Find the x boxes within our cuboid's range
+        for j in range(0, len(x)):
+            if cube.x1 <= x[j] and x[j] < cube.x2:
+                my_x_boxes.append(j)
+        # Find the y boxes within our cuboid's range
+        for j in range(0, len(y)):
+            if cube.y1 <= y[j] and y[j] < cube.y2:
+                my_y_boxes.append(j)
+        # Find the z boxes within our cuboid's range
+        for j in range(0, len(z)):
+            if cube.z1 <= z[j] and z[j] < cube.z2:
+                my_z_boxes.append(j)
+        # Iterate over all boxes within the cuboid's range
+        for myx in my_x_boxes:
+            for myy in my_y_boxes:
+                for myz in my_z_boxes:
+                    # Turn the box on or off as appropriate
+                    box_num = myx + len(x)*myy + len(x)*len(y)*myz
+                    if c[i].inst == "off":
+                        print(f"Turning off box {box_num} for x({myx}) y({myy}) z({myz})")
+                        boxes[box_num] = 0 # Zero volume to be counted
+                    else:
+                        # Determine the volume of this box
+                        xrange = x[myx+1]-x[myx]
+                        yrange = y[myy+1]-y[myy]
+                        zrange = z[myz+1]-z[myz]
+                        boxes[box_num] = xrange * yrange * zrange
+                        print(f"  - x({x[myx]}..{x[myx+1]}={xrange}) y({y[myy]}..{y[myy+1]}={yrange}) z({z[myz]}..{z[myz+1]}={zrange}) volume {xrange * yrange * zrange}")
+                        # Volume needs to be counted inclusive of the upper bound, so add values to the boxes representing those edges
+                        # 2d planes
+                        if boxes[ 1 + myx + len(x)*myy + len(x)*len(y)*myz ] == 0:
+                            boxes[ 1 + myx + len(x)*myy + len(x)*len(y)*myz ] = yrange * zrange
+                        if boxes[ myx + len(x)*(myy+1) + len(x)*len(y)*myz ] == 0:
+                            boxes[ myx + len(x)*(myy+1) + len(x)*len(y)*myz ] = xrange * zrange
+                        if boxes[ myx + len(x)*myy + len(x)*len(y)*(myz+1) ] == 0:
+                            boxes[ myx + len(x)*myy + len(x)*len(y)*(myz+1) ] = xrange * yrange
+                        # 1d edges
+                        if boxes[ 1 + myx + len(x)*(myy+1) + len(x)*len(y)*myz ] == 0:
+                            boxes[ 1 + myx + len(x)*(myy+1) + len(x)*len(y)*myz ] = zrange
+                        if boxes[ myx + len(x)*(myy+1) + len(x)*len(y)*(myz+1) ] == 0:
+                            boxes[ myx + len(x)*(myy+1) + len(x)*len(y)*(myz+1) ] = xrange
+                        if boxes[ 1 + myx + len(x)*myy + len(x)*len(y)*(myz+1) ] == 0:
+                            boxes[ 1 + myx + len(x)*myy + len(x)*len(y)*(myz+1) ] = yrange
+                        # 1 pixel corners
+                        # TO-DO
+
+    # Sum all the boxes to find our answer
+    print("Summing...")
+    a = sum(boxes)
+    print(a, a-590784)
+    print(sum(cache))
+
+### PART 1
+# Test data answer 590784
+# Input data answer 652209
+
+# part1(data)
+part2again(data)
