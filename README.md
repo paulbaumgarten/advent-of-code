@@ -17,5 +17,14 @@ https://adventofcode.com/2021
 * Day 13 - Transparent Origami - 2D array reflections
 * Day 14 - Extended Polymerization - Exponential growth (see day 6)
 * Day 15 - Dijkstra pathfinding
-* Day 16 - Binary parsing
-* Day 17 - 
+* Day 16 - Binary parsing - Not done
+* Day 17 - Trick Shot - Tracking parabolas
+* Day 18 - Snailfish - Arimetic machine - Not done
+* Day 19 - Beacon Scanner - 3 dimensional mapping - Not done
+* Day 20 - Trench map - Conways game of life
+* Day 21 - Dirac Dice - Coin combinations++
+* Day 22 - Reactor Reboot - Volume of intersecting cuboids in 3 dimensional space 
+* Day 24 - ALU - Deceptive opcodes, but really a reverse engineering problem
+* Day 25 - Sea Cucumber - Movement on a 2d plane
+
+Using Python 3.8

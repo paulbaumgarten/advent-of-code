@@ -3,7 +3,7 @@
 from __future__ import annotations
 import time, math
 
-with open("day22a.txt","r") as f:
+with open("day22.txt","r") as f:
     data = f.read().splitlines()
 
 def part1(data):
@@ -46,11 +46,11 @@ def part1(data):
 class Cube:
     def __init__(self, x1, x2, y1, y2, z1, z2):
         self.x1 = x1
-        self.x2 = x2
+        self.x2 = x2+1
         self.y1 = y1
-        self.y2 = y2
+        self.y2 = y2+1
         self.z1 = z1
-        self.z2 = z2
+        self.z2 = z2+1
         self.inst = None
         self.parent = None
     
@@ -189,8 +189,8 @@ def part2(data):
             total += cuboids[c].volume()
     print(total)
 
-def part2again(data):
-    c = part2parse(data, all=False)
+def part2r2(data):
+    c = part2parse(data, all=True)
     # Print the cubes
     mi = 0
     ma = 0
@@ -253,7 +253,7 @@ def part2again(data):
                     # Turn the box on or off as appropriate
                     box_num = myx + len(x)*myy + len(x)*len(y)*myz
                     if c[i].inst == "off":
-                        print(f"Turning off box {box_num} for x({myx}) y({myy}) z({myz})")
+                        #print(f"Turning off box {box_num} for x({myx}) y({myy}) z({myz})")
                         boxes[box_num] = 0 # Zero volume to be counted
                     else:
                         # Determine the volume of this box
@@ -261,24 +261,7 @@ def part2again(data):
                         yrange = y[myy+1]-y[myy]
                         zrange = z[myz+1]-z[myz]
                         boxes[box_num] = xrange * yrange * zrange
-                        print(f"  - x({x[myx]}..{x[myx+1]}={xrange}) y({y[myy]}..{y[myy+1]}={yrange}) z({z[myz]}..{z[myz+1]}={zrange}) volume {xrange * yrange * zrange}")
-                        # Volume needs to be counted inclusive of the upper bound, so add values to the boxes representing those edges
-                        # 2d planes
-                        if boxes[ 1 + myx + len(x)*myy + len(x)*len(y)*myz ] == 0:
-                            boxes[ 1 + myx + len(x)*myy + len(x)*len(y)*myz ] = yrange * zrange
-                        if boxes[ myx + len(x)*(myy+1) + len(x)*len(y)*myz ] == 0:
-                            boxes[ myx + len(x)*(myy+1) + len(x)*len(y)*myz ] = xrange * zrange
-                        if boxes[ myx + len(x)*myy + len(x)*len(y)*(myz+1) ] == 0:
-                            boxes[ myx + len(x)*myy + len(x)*len(y)*(myz+1) ] = xrange * yrange
-                        # 1d edges
-                        if boxes[ 1 + myx + len(x)*(myy+1) + len(x)*len(y)*myz ] == 0:
-                            boxes[ 1 + myx + len(x)*(myy+1) + len(x)*len(y)*myz ] = zrange
-                        if boxes[ myx + len(x)*(myy+1) + len(x)*len(y)*(myz+1) ] == 0:
-                            boxes[ myx + len(x)*(myy+1) + len(x)*len(y)*(myz+1) ] = xrange
-                        if boxes[ 1 + myx + len(x)*myy + len(x)*len(y)*(myz+1) ] == 0:
-                            boxes[ 1 + myx + len(x)*myy + len(x)*len(y)*(myz+1) ] = yrange
-                        # 1 pixel corners
-                        # TO-DO
+                        #print(f"  - x({x[myx]}..{x[myx+1]}={xrange}) y({y[myy]}..{y[myy+1]}={yrange}) z({z[myz]}..{z[myz+1]}={zrange}) volume {xrange * yrange * zrange}")
 
     # Sum all the boxes to find our answer
     print("Summing...")
@@ -291,4 +274,12 @@ def part2again(data):
 # Input data answer 652209
 
 # part1(data)
-part2again(data)
+
+### PART 2
+# There are 420 cubes
+# Coordinate range from  -94918 to 97826 range of  192744
+# x: 837 items, y: 833 items, z: 827 items = 576601767 boxes
+# Allocated 576601767 boxes
+# Input data answer: 1217808640648260
+
+part2r2(data)
