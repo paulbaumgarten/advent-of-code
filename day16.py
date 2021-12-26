@@ -16,21 +16,47 @@
 * Length type ID == 1
     - Next 11 bits = the number of sub-packets this packet contains
     
-
-def part1(inp):
-    b = bytearray.fromhex(inp)
-    pos = 0
-    while pos < len(b):
-        print(b[pos])
-        ver = (b[pos] & 0b1110000) >> 5
-        typeid = (b[pos] & 0b00011100) >> 2
-        print("ver",ver, "typeid",typeid)
-        if typeid != 4:
-            length_typeid = (b[pos] & 0b00000010) >> 1
-
-        pos += 1
-
 # 00111000
-part1("38006F45291200")
 #inp = input()
 """
+
+def literal(inp, position=0):
+    value = 0
+    while inp[position] == "1":
+        value = value * 16 + int(inp[position+1:position+5], base=2)
+        position += 5
+    value = value * 16 + int(inp[position+1:position+5], base=2)
+    position += 5
+    return value, position
+
+def packet(b, pos=0):
+    print("Processing packet:",b)
+    ver = int(b[pos:pos+3], base=2)
+    print("Version:",ver)
+    packet_type_id = int(b[pos+3:pos+6], base=2)
+    pos +=6
+    if packet_type_id == 4:
+        val, pos = literal(b, pos)
+        print("Literal value ",val)
+        return pos
+    else:
+        length_type_id = int(b[pos])
+        pos+=1
+        if length_type_id == 0:
+            subpacket_length = int(b[pos:pos+15], base=2)
+            print("Subpacket length:",subpacket_length)
+            pos+=15
+            pos += packet(b[pos:pos+subpacket_length])
+            return pos
+        elif length_type_id == 1:
+            subpacket_qty = int(b[pos:pos+11], base=2)
+            pos+=11
+            for i in range(subpacket_qty):
+                pos = packet(b, pos)
+
+data = bin(int("38006F45291200", base=16))[2:]
+while len(data) % 4 != 0:
+    data = "0" + data
+print(data)
+packet(data)
+
