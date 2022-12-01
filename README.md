@@ -1,6 +1,36 @@
-# Advent Of Code 2021
+# Advent Of Code
 
-https://adventofcode.com/2021
+My solutions to various [Advent of code](https://adventofcode.com) problems.
+
+## 2022
+
+* Day 1 - Calories per Elf - Array arithmetic
+* Day 2 - 
+* Day 3 - 
+* Day 4 - 
+* Day 5 - 
+* Day 6 - 
+* Day 7 - 
+* Day 8 - 
+* Day 9 - 
+* Day 10 - 
+* Day 11 - 
+* Day 12 - 
+* Day 13 - 
+* Day 14 - 
+* Day 15 - 
+* Day 16 - 
+* Day 17 - 
+* Day 18 - 
+* Day 19 - 
+* Day 20 - 
+* Day 21 - 
+* Day 22 - 
+* Day 23 - 
+* Day 24 - 
+* Day 25 - 
+
+## 2021
 
 * Day 1 - Sonar Sweep - Array arithmetic
 * Day 2 - Dive! - Array arithmetic
@@ -19,7 +49,7 @@ https://adventofcode.com/2021
 * Day 15 - Dijkstra pathfinding
 * Day 16 - Binary parsing - Not done
 * Day 17 - Trick Shot - Tracking parabolas
-* Day 18 - Snailfish - Arimetic machine - Not done
+* Day 18 - Snailfish - Arithmetic machine - Not done
 * Day 19 - Beacon Scanner - 3 dimensional mapping - Not done
 * Day 20 - Trench map - Conways game of life
 * Day 21 - Dirac Dice - Coin combinations++
@@ -27,4 +57,3 @@ https://adventofcode.com/2021
 * Day 24 - ALU - Deceptive opcodes, but really a reverse engineering problem
 * Day 25 - Sea Cucumber - Movement on a 2d plane
 
-Using Python 3.8
