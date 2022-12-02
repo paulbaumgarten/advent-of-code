@@ -3,7 +3,8 @@
 from __future__ import annotations
 import time, math
 
-with open("day22.txt","r") as f:
+start = time.time()
+with open("./2021/day22.txt","r") as f:
     data = f.read().splitlines()
 
 def part1(data):
@@ -283,3 +284,4 @@ def part2r2(data):
 # Input data answer: 1217808640648260
 
 part2r2(data)
+print("Execution time: ",time.time()-start)

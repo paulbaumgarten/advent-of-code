@@ -5,7 +5,7 @@ My solutions to various [Advent of code](https://adventofcode.com) problems.
 ## 2022
 
 * Day 1 - Calories per Elf - Array arithmetic
-* Day 2 - 
+* Day 2 - Tic Tac Toe game
 * Day 3 - 
 * Day 4 - 
 * Day 5 - 
