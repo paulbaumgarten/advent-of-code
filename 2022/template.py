@@ -2,7 +2,7 @@ import time, math
 from pprint import pprint
 
 start = time.time()
-with open("./2022/day1.txt", "r") as f:
+with open("./2022/day---.txt", "r") as f:
     data = f.read().splitlines()
 
 """
