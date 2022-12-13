@@ -8,9 +8,13 @@ def part2(data):
     pass
 
 start = time.time()
-with open("./2022/day---.txt", "r") as f:
-    data = f.read().splitlines()
 
+def parse(filename):
+    with open(filename, "r") as f:
+        data = f.read().splitlines()
+    return data
+
+data = parse("./2022/day---.txt")
 print(part1(data))
 print(part2(data))
 print("Execution time:",time.time()-start)
