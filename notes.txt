@@ -1,0 +1,33 @@
+
+"""
+def dijkstra(data, start, dest):
+    to_visit = [ start ]
+    closed = []
+    costs = []
+    routes = []
+    while len( to_visit ) > 0:
+        # Find the item in the to_visit list with lowest cost, make it 'current'
+        current = to_visit[0]
+        for n in to_visit:
+            if cost[n] < cost[current]:
+                current = n
+        # Remove 'current' from 'to_visit', add to 'closed_list'
+        closed.append(current)
+        to_visit.remove(current)
+        # If current is destination, return cost/route
+        if current == dest:
+            return costs[current], routes[current]
+        # Get the adjacent nodes for the current node
+        adjacent_nodes = []
+        # Build adjacent_nodes list
+        # For all adjacent nodes
+            # Calculate route from start to this adjacent node
+            # Calculate cost from start to this adjacent node
+            # If adjacent node is closed, continue (restart) loop
+            # If adjacent node not in to_visit
+                # Add adjacent node to to_visit, costs, routes
+            # Else if it is in to_visit
+                # Calculate alternative cost via this route
+                # If close is lower this way, replace old cost
+    # End of dijkstra
+"""
