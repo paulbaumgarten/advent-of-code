@@ -31,4 +31,3 @@ int main() {
     part2();
     return 0;
 }
-
