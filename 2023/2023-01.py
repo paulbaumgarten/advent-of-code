@@ -1,6 +1,6 @@
 # Advent of code 2023 day 1
 
-with open("2023-1.txt", "r") as f:
+with open("./2023/2023-01.txt", "r") as f:
     data = f.read().splitlines()
 
 def part1(data):
@@ -42,5 +42,5 @@ def part2(data):
         print()
     print(total)
 
-part1()
-part2()
+part1(data)
+part2(data)
