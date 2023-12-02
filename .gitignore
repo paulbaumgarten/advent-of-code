@@ -114,3 +114,4 @@ dmypy.json
 .pyre/
 day06
 *.exe
+.DS_Store
