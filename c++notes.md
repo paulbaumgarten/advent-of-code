@@ -141,10 +141,8 @@ cin >> a;
 cin >> b;
 
 Issues with cin:
-* Any kind of space is used to separate two consecutive input operations; this may either be a space, a tab, or a new-line character.
-* cin extraction always considers spaces (whitespaces, tabs, new-line...) as terminating the value being extracted, and thus extracting a string means to always extract a single word, not a phrase or an entire sentence.
-
-To input a full line without breaking on spaces, use the getline function….
+* Any white space is used to separate two consecutive input operations; (space/tab/enter)
+* To input a full line without breaking on spaces, use the getline function….
 
 ```cpp
 string s;
@@ -236,8 +234,7 @@ char greeting[6] = {'H', 'e', 'l', 'l', 'o', '\0'}; // equivalent statements
 strcpy(s1, s2);	// Copies string s2 into string s1.
 strcat(s1, s2);	// Concatenates string s2 onto the end of string s1.
 strlen(s1);		// Returns the length of string s1.
-strcmp(s1, s2);	// Returns 0 if s1 and s2 are the same, less than 0 if s1<s2, 
-			// greater than 0 if s1>s2.
+strcmp(s1, s2);	// Returns 0 if s1 and s2 are the same, less than 0 if s1<s2, greater than 0 if s1>s2.
 strchr(s1, ch);	// Returns a pointer to first occurrence of character ch in string s1.
 strstr(s1, s2);	// Returns a pointer to first occurrence of string s2 in string s1.
 
@@ -356,8 +353,8 @@ p = b;               // p now points to the first int of array b
 
 ## An array or pointer with an index n in square brackets returns the nth value:
 
-int a[10];           // an array of 10 ints
-int *p;              // a pointer for integers
+int a[10];           // array of 10 ints
+int *p;              // pointer for integers
 int i = a[0];        // i is the first element of a
 i = *a;              // pointer dereference. i is the first element of a
 p = a;               // same as p = &a[0]
@@ -518,9 +515,10 @@ Include the following to work on files
 * ofstream: Stream class to write on files
 * ifstream: Stream class to read from files
 * fstream: Stream class to both read and write from/to files.
+* You can read and write these streams using the same syntax as cin and cout.
 
 ```cpp
-// Read a text file
+// Read a text file, line by line
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -536,33 +534,6 @@ int main () {
     myfile.close();
   } else cout << "Unable to open file"; 
   return 0;
-}
-
-// ---------------------------------------------------------------
-
-// Read entire text file to a string
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <fstream>
-
-using namespace std;
-
-string readFile(string filename) {
-    // https://stackoverflow.com/a/19922123
-    string out;
-    stringstream buffer;
-    ifstream f(filename);       // Open file
-    if (f.is_open()) {
-        buffer << f.rdbuf();    // Read file into stringstream buffer
-        out = buffer.str();     // Copy buffer to string, `out`
-        f.close();
-    }
-    return out;
-}
-
-int main() {
-    string content = readFile("wild-wild-west.txt");
 }
 
 // ---------------------------------------------------------------
@@ -652,8 +623,6 @@ http://www.cplusplus.com/doc/tutorial/files/
 # Vectors
 ==================================================================================
 
-Vectors are sequence containers representing arrays that can change in size.
-
 ```cpp
 #include <iostream>
 #include <vector>
@@ -663,29 +632,21 @@ using namespace std;
 int main() {
     // Create empty vector
     vector<int> values = {};
-
-    // Read into the vector
-    for (int i=0; i < 10; i++) {
-        int tmp;
-        cout << "\nEnter value " << (i+1) << ": ";
-        cin >> tmp;
-        values.push_back(tmp);
-    }
-    cout << "\n";
+    values.push_back(2);
+    values.push_back(3);
+    values.push_back(5);
+    values.push_back(7);
+    values.push_back(11);
 
     // Iterate through the vector
-    cout << "There are " << values.size() << " items in the vector\n";
+    cout << "There are " << values.size() << " items in the vector" << endl;
     for (int i=0; i<values.size(); i++) {
-        cout << "\nItem " << (i+1) << ": " << values[i];
+        cout << "Item " << (i+1) << ": " << values[i] << endl;
     }
 
-    // Pop off the vector
-    cout << "\nPopping...\n";
-    while (! values.empty()) {
-        int tmp = values.back(); // Get reference to last element - use .front() for first
-        values.pop_back(); // Remove last element
-        cout << "\nPopped: " << tmp;
-    }
+    cout << "First element is " << values.front() << endl;
+    cout << "Last element is " << values.back() << endl;
+    values.pop_back();
 }
 ```
 
