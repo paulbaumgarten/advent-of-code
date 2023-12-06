@@ -1,0 +1,56 @@
+
+TEST = """Time: 7 15 30
+Distance: 9 40 200"""
+
+LIVE = """Time: 41 96 88 94
+Distance: 214 1789 1127 1055"""
+
+def part1():
+    times, distances = LIVE.splitlines()
+    times = (times.split(": ")[1]).split(" ")
+    distances = (distances.split(": ")[1]).split(" ")
+    rounds = [(int(times[i]), int(distances[i])) for i in range(0, len(times))]
+    print(rounds)
+    winning = []
+    for i in range(0, len(rounds)):
+        this_race = []
+        for t in range(0, rounds[i][0]):
+            speed = t
+            movement_time = rounds[i][0] - speed
+            distance_traveled = movement_time * speed
+            if distance_traveled > rounds[i][1]:
+                this_race.append(speed)
+        winning.append(len(this_race))
+    print(winning)
+    product = 1
+    for n in winning:
+        product *= n
+    print(product)
+
+def part2():
+    times, distances = LIVE.splitlines()
+    times = (times.split(": ")[1]).replace(" ","")
+    distances = (distances.split(": ")[1]).replace(" ","")
+    rounds = [(int(times), int(distances))]
+    print(rounds)
+    winning = []
+    for i in range(0, len(rounds)):
+        this_race = []
+        for t in range(0, rounds[i][0]):
+            if t % 10000 == 0:
+                print(100*t/rounds[i][0],"%")
+            speed = t
+            movement_time = rounds[i][0] - speed
+            distance_traveled = movement_time * speed
+            if distance_traveled > rounds[i][1]:
+                this_race.append(speed)
+        winning.append(len(this_race))
+    print(winning)
+    product = 1
+    for n in winning:
+        product *= n
+    print(product)
+    
+part1()
+part2()
+
