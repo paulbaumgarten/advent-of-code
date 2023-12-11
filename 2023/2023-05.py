@@ -56,7 +56,7 @@ def part1():
         print(f"seed {seed} has location {item}")
         locations.append(item)
     # Find the lowest location value
-    print(min(locations))
+    print(min(locations)) # 318728750
 
 def part2_demo():
     seeds, labels, inf = parse()
@@ -85,68 +85,36 @@ def part2_demo():
             if min_location < 0 or item < min_location:
                 min_location = item
     # Find the lowest location value
-    print(min_location)
+    print(min_location) # 37384986
 
 def part2():
     seeds, labels, inf = parse()
     # Convert the data
-    rounds = []
-    this_round = [] # tuple: from (bottom of range), from (top of range), diff
-    #for s in range(0,len(seeds),2):
-    #    this_round.append((seeds[s], seeds[s]+seeds[s+1], seeds[s]))
-    #rounds.append(this_round)
-
+    windows = []
+    diff = []
     for k,v in inf.items():
-        # Process this conversion
-        this_round = [] # tuple: from (bottom of range), from (top of range), diff
-        for mapping_set in v:
-            this_round.append((mapping_set['src'], mapping_set['src']+mapping_set['leng'], mapping_set['dest']-mapping_set['src']))
-        rounds.append(this_round)
-    #print(rounds)
-
-    # Progress
-    current_ranges=[(79, 79+14), (55, 55+13)] # [(79, 93), (55, 68)]
-    i =1
-    for round in rounds: # Each set of values for a round (eg: seed to soil)
-        next_range = []
-        print("Round #",i, "range set ",round," current range",current_ranges)
-        i+=1
-        for current in current_ranges: # The seeds range
-            dealt_with = False
-            for range_set in round: # ( from_bottom, from_max_diff, diff )
-                if   current[0] < range_set[0] and current[0]<range_set[1] and current[1] < range_set[1] and current[1] > range_set[0]:
-                    next_range.append(( current[0], range_set[0] ))
-                    next_range.append(( range_set[0]+range_set[2], current[1]+range_set[2] ))
-                    #next_range.append(( range_set[0]+1, current[1] ))
-                    dealt_with = True
-                elif current[0] > range_set[0] and current[0]<range_set[1] and current[1] < range_set[1] and current[1] > range_set[0]:
-                    next_range.append(( current[0]+range_set[2], current[1]+range_set[2] ))
-                    #next_range.append(( current[0], current[1] ))
-                    dealt_with = True
-                elif current[0] < range_set[0] and current[0]<range_set[1] and current[1] > range_set[1] and current[1] > range_set[0]:
-                    next_range.append(( current[0], range_set[0] ))
-                    next_range.append(( range_set[0]+range_set[2], range_set[1]+range_set[2] ))
-                    #next_range.append(( range_set[0]+1, range_set[1] ))
-                    next_range.append(( range_set[1], current[1] ))
-                    dealt_with = True
-                elif current[0] > range_set[0] and current[0]<range_set[1] and current[1] > range_set[1] and current[1] > range_set[0]:
-                    next_range.append(( current[0]+range_set[2], range_set[1]+range_set[2] ))
-                    #next_range.append(( current[0], range_set[1] ))
-                    next_range.append(( range_set[1], current[1] ))
-                    dealt_with = True
-            if not dealt_with:
-                next_range.append(( current[0], current[1] ))
-        while len(current_ranges)>0:
-            current_ranges.pop()
-        while len(next_range)>0:
-            current_ranges.append(next_range.pop())    
-        print("current_ranges",current_ranges)
-    starting_values = []
-    for r in current_ranges:
-        starting_values.append(r[0])
-    print(min(starting_values))
+        boundaries = []
+        changes = []
+        for j in range(0, len(v)):
+            boundaries.append(v[j]['src'])
+            changes.append(v[j]['dest']-v[j]['src'])
+            boundaries.append(v[j]['src']+v[j]['leng'])
+            changes.append(0)
+        # Sort them
+        swapped = True
+        while swapped:
+            swapped = False
+            for j in range(0,len(boundaries)-1):
+                if boundaries[j] > boundaries[j+1]:
+                    boundaries[j], boundaries[j+1] = boundaries[j+1], boundaries[j]
+                    changes[j], changes[j+1] = changes[j+1], changes[j]
+                    swapped = True
+        # Add to the stack
+        windows.append(boundaries)
+        diff.append(changes)
+    print(windows)
 
 #part1()
-part2_demo()
-#part2()
+#part2_demo()
+part2()
 

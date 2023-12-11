@@ -1,7 +1,7 @@
 
-FILE = "./2023/2023-04.txt"
+FILE = "./2023/2023-xx.txt"
 
-def part1(): #907th
+def part1():
     with open(FILE, "r") as f:
         data = f.read().splitlines()
 
