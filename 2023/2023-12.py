@@ -1,3 +1,4 @@
+import functools
 import time
 
 T = time.time()
@@ -96,15 +97,9 @@ def is_pattern_full_match(partial, goal):
     #print(partial, goal[0:len(partial)])
     return partial == goal
 
-def pattern_counts(pattern, counts):
-    # Convert a counts 1,1,3 into a target string of #.#.###
-    goal = ""
-    for i in range(0, len(counts)):
-        goal += "#"*counts[i]+"."
-    goal = goal[:-1]
+def pattern_counts(pattern, goal):
     # List of partial matches found so far
     matching = [""]
-    cache = []
     full_matches = 0
     while len(matching) > 0:
         match = matching.pop()
@@ -112,7 +107,6 @@ def pattern_counts(pattern, counts):
             if is_pattern_full_match(match, goal):
                 #print("          ",match,goal)
                 full_matches += 1
-                cache.append(match)
         else:
             next_char = pattern[len(match)]
             if next_char == "#":
@@ -126,7 +120,41 @@ def pattern_counts(pattern, counts):
                     matching.append(match+"#")
                 if is_pattern_partial_match(match+".", goal):
                     matching.append(match+".")
-    return full_matches, cache
+    return full_matches
+
+@functools.cache
+def pattern_counts_r(pattern, goal):
+    # List of partial matches found so far
+    full_matches = 0
+
+    match = ""
+    if len(match) == len(pattern):
+        if is_pattern_full_match(match, goal):
+            return 1
+        else:
+            return 0
+    else:
+        next_char = pattern[len(match)]
+        if next_char == "#":
+            if is_pattern_partial_match(match+"#", goal):
+                full_matches += pattern_counts_r(match+"#", goal)
+        if next_char == ".":
+            if is_pattern_partial_match(match+".", goal):
+                full_matches += pattern_counts_r(match+".", goal)
+        if next_char == "?":
+            if is_pattern_partial_match(match+"#", goal):
+                full_matches += pattern_counts_r(match+"#", goal)
+            if is_pattern_partial_match(match+".", goal):
+                full_matches += pattern_counts_r(match+".", goal)
+    return full_matches
+
+def counts_to_goal(counts):
+    # Convert a counts 1,1,3 into a target string of #.#.###
+    goal = ""
+    for i in range(0, len(counts)):
+        goal += "#"*counts[i]+"."
+    goal = goal[:-1]
+    return goal
 
 def part2():
     with open(FILE, "r") as f:
@@ -143,12 +171,12 @@ def part2():
         # Solve pattern 1
         counts = [int(n) for n in counts.split(",")]
         print(f"Pattern {r}: {pattern} counts {counts}")
-        a, _ = pattern_counts(pattern, counts)
+        a = pattern_counts(pattern, counts_to_goal(counts))
 
         # Solve pattern 2
         counts2 = [int(n) for n in counts2.split(",")]
         print(f"Pattern {r}: {pattern2} counts {counts2}")
-        b, _ = pattern_counts(pattern2, counts2)
+        b = pattern_counts(pattern2, counts_to_goal(counts2))
 
         # Math it!
         print("a,b",a,b)
