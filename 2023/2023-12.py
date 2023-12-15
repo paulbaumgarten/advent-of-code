@@ -1,5 +1,8 @@
 import functools
 import time
+from pprint import pprint
+import json
+import copy
 
 T = time.time()
 
@@ -122,30 +125,97 @@ def pattern_counts(pattern, goal):
                     matching.append(match+".")
     return full_matches
 
-@functools.cache
-def pattern_counts_r(pattern, goal):
-    # List of partial matches found so far
-    full_matches = 0
 
-    match = ""
-    if len(match) == len(pattern):
-        if is_pattern_full_match(match, goal):
-            return 1
-        else:
-            return 0
-    else:
-        next_char = pattern[len(match)]
-        if next_char == "#":
-            if is_pattern_partial_match(match+"#", goal):
-                full_matches += pattern_counts_r(match+"#", goal)
-        if next_char == ".":
-            if is_pattern_partial_match(match+".", goal):
-                full_matches += pattern_counts_r(match+".", goal)
-        if next_char == "?":
-            if is_pattern_partial_match(match+"#", goal):
-                full_matches += pattern_counts_r(match+"#", goal)
-            if is_pattern_partial_match(match+".", goal):
-                full_matches += pattern_counts_r(match+".", goal)
+NO_FIT = {} # {token_idx { position: True }}
+FIT = [] # tuples of (token_idx, position)
+CACHE = {} # Depth, start_from
+
+def find_tokens_this_depth(pattern, counts, depth, start_from=0):
+    global NO_FIT, CACHE
+    # Memoization - recall
+    if depth in CACHE.keys():
+        if start_from in CACHE[depth].keys():
+            return CACHE[depth][start_from] 
+    matches = {}
+    current_token_idx = depth
+    previous_mandatory_blocks = 0
+    mandatory_block_started = False
+    prev_ch = '.'
+    for i in range(0, start_from):
+        ch = pattern[i]
+        # Mandatory blocks
+        if ch == "#":
+            mandatory_block_started = True
+        if ch == "." and mandatory_block_started:
+            mandatory_block_started = False
+            previous_mandatory_blocks += 1
+        prev_ch = ch
+    for i in range(start_from, len(pattern)):
+        ch = pattern[i]
+        # Mandatory blocks
+        if ch == "#":
+            mandatory_block_started = True
+        if ch == "." and mandatory_block_started:
+            mandatory_block_started = False
+            previous_mandatory_blocks += 1
+        if (prev_ch in ['.', '?']) and (ch in ['#','?']):
+            # Possible start of a block... does it fit?
+            fit = True
+            if fit and previous_mandatory_blocks > current_token_idx:
+                fit = False
+            if fit and len(pattern) < (i+counts[current_token_idx]):
+                fit = False
+            if fit:
+                for j in range(0, counts[current_token_idx]):
+                    if pattern[i+j] not in ["#", "?"]:
+                        fit = False
+            if fit:
+                if len(pattern) > (i+counts[current_token_idx]) and pattern[i+counts[current_token_idx]] not in ['.','?']:
+                    fit = False 
+            # Start a new block possible block
+            if fit:
+                if i not in matches.keys():
+                    if current_token_idx==len(counts)-1: # All tokens satisfied
+                        # Make sure there aren't left over mandatory blocks before we are ok
+                        if pattern[i+counts[current_token_idx]:].count("#") == 0:
+                            matches[i]=1
+                        else:
+                            matches[i]=0
+                    elif i+counts[current_token_idx]+1 > len(pattern):
+                        fit = False
+                        matches[i]=0
+                    else:
+                        if depth+1 in CACHE.keys() and i+counts[current_token_idx]+1 in CACHE[depth+1].keys():
+                            matches[i] = CACHE[depth+1][i+counts[current_token_idx]+1] 
+                        else:
+                            matches[i] = find_tokens_this_depth(pattern, counts, depth+1, i+counts[current_token_idx]+1)
+        prev_ch = ch
+    # Memoization - save
+    if depth not in CACHE.keys():
+        CACHE[depth] = {}
+    CACHE[depth][start_from] = copy.deepcopy(matches)
+    return matches
+# 506250 or 826550 ?
+
+def count_permutations(p):
+    #print("layer")
+    tot = 0
+    for k,v in p.items():
+        #print(type(v),v)
+        if type(v) == dict:
+            tot += count_permutations(v)
+        if type(v) == int:
+            tot += v
+    return tot
+
+def pattern_counts_432469(pattern, counts):
+    global CACHE, NO_FIT
+    CACHE = {}
+    NO_FIT = []
+    permutations = find_tokens_this_depth(pattern, counts, 0)
+    text = json.dumps(permutations,indent=3)
+    #print(text)
+    full_matches = count_permutations(permutations)
     return full_matches
 
 def counts_to_goal(counts):
@@ -159,34 +229,54 @@ def counts_to_goal(counts):
 def part2():
     with open(FILE, "r") as f:
         data = f.read().splitlines()
-    #data = TEST
+    data = TEST
+    #        0123456789-123456
+    #data = ["?#???.#??#?????.? 3,1,3,1,1"]
+    size=2
     total = 0
-    # Round 1 - The small sized data
-    #for r in range(0, len(data)):
-    for r in range(0, len(data)):
-        pattern, counts = data[r].split(" ")
-        counts2 = counts+","+counts+","+counts+","+counts+","+counts
-        pattern2 = pattern+"?"+pattern+"?"+pattern+"?"+pattern+"?"+pattern
 
-        # Solve pattern 1
-        #counts = [int(n) for n in counts.split(",")]
-        #print(f"Pattern {r}: {pattern} counts {counts}")
-        #a = pattern_counts(pattern, counts_to_goal(counts))
+    if size==1:
+        for r in range(0, len(data)):
+        #for r in range(1,2):
+            pattern, counts = data[r].split(" ")
 
-        # Solve pattern 2
-        counts2 = [int(n) for n in counts2.split(",")]
-        print(f"Pattern {r}: {pattern2} counts {counts2}")
-        b = pattern_counts(pattern2, counts_to_goal(counts2))
+            # Solve pattern 1
+            counts = [int(n) for n in counts.split(",")]
+            print(f"Pattern {r}: {pattern} counts {counts}")
+            res = pattern_counts_432469(pattern, counts)
 
-        # Math it!
-        #result = res2**4 / res1**3
-        #result = a * (b/a) * (b/a) * (b/a) * (b/a)
-        #result = (b**2 - a**4 + a**3) * (a**2)
-        result = b
+            print(f"  ->",res, "total time so far:",int(time.time()-T))
+            total += res
+        print(total)
+    if size==2:
+        for r in range(0, len(data)):
+            pattern, counts = data[r].split(" ")
+            counts2 = counts+","+counts
+            pattern2 = pattern+"?"+pattern
 
-        print(f"  ->",result, "total time so far:",int(time.time()-T))
-        total += int(result)
-    print(total)
+            # Solve pattern 2
+            counts2 = [int(n) for n in counts2.split(",")]
+            print(f"Pattern {r}: {pattern2} counts {counts2}")
+            res = pattern_counts_432469(pattern2, counts2)
+            other = pattern_counts(pattern2, counts_to_goal(counts2))
+
+            print(f"  ->",res, other, "total time so far:",int(time.time()-T))
+            total += res
+        print(total)
+    if size==5:
+        for r in range(5, len(data)):
+            pattern, counts = data[r].split(" ")
+            counts5 = counts+","+counts+","+counts+","+counts+","+counts
+            pattern5 = pattern+"?"+pattern+"?"+pattern+"?"+pattern+"?"+pattern
+
+            # Solve pattern 2
+            counts5 = [int(n) for n in counts5.split(",")]
+            print(f"Pattern {r}: {pattern5} counts {counts5}")
+            res = pattern_counts_432469(pattern5, counts5)
+
+            print(f"  ->",res, "total time so far:",int(time.time()-T))
+            total += res
+        print(total)
 
 #part1()
 part2()
