@@ -1,0 +1,23 @@
+
+coords = [
+    (0,6),
+    (2,13),
+    (7,6),
+    (7, 10),
+    (5,11),
+    (5,13),
+    (10,13),
+    (13,0),
+    (2,2)
+]
+
+tot = 0
+for i in range(0, len(coords)-1):
+    y1,x1 = coords[i]
+    y2,x2 = coords[i+1]
+    tot += x1*y2-x2*y1
+y1,x1 = coords[len(coords)-1]
+y2,x2 = coords[0]
+tot += x1*y2-x2*y1
+tot = 0.5 * abs(tot)
+print(tot)
