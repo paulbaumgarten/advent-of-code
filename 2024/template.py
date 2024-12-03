@@ -1,4 +1,4 @@
-import math, random, numpy, os
+import math, random, numpy, os, re
 
 def get_data():
     path_parts = __file__.split(os.path.sep)
@@ -10,7 +10,7 @@ def get_data():
     return data
 
 def part1(data):
-    
+    pass    
 
 def part2(data):
     pass
