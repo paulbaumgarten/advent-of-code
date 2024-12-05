@@ -9,10 +9,10 @@ def get_data():
         data = f.read().splitlines()
     return data
 
-def part1(data):
+def part1(raw):
     pass    
 
-def part2(data):
+def part2(raw):
     pass
 
 if __name__=="__main__":
