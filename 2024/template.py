@@ -1,4 +1,4 @@
-import math, random, numpy, os, re
+import math, random, numpy, os, re, copy, time
 
 def get_data():
     path_parts = __file__.split(os.path.sep)
@@ -16,10 +16,13 @@ def part2(raw):
     pass
 
 if __name__=="__main__":
+    start = time.time()
     result = part1(get_data())
     print(f"Part 1 result:",result)
     if result:
         result = part2(get_data())
         print("Part 2 result:",result)
+    finish = time.time()
+    print(f"Time taken: {(finish-start):.2f} seconds")
 
 
