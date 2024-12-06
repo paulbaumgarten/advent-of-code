@@ -44,7 +44,7 @@ for question in questions:
         
         # Count responses
         response_counts = gender_data[f'Questions [{question}]'].value_counts()
-        response_counts = response_counts.reindex(preferred_order)
+        response_counts = response_counts.reindex(preferred_order).fillna(0)
         print(f'Questions [{question}]',response_counts)
         # Plot
         colors = [response_colors[label] for label in response_counts.index if label in response_colors]

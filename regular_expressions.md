@@ -18,7 +18,7 @@ $ Matches the end of the string
 \W: Not a word character
 \S: Not whitespace character
 
-\b: Matches a word boundary. This is a zero-width assertion that matches only the position between a word character and a non-word character.
+\b: Matches a word boundary. Matches the position between a word character and a non-word character.
 \B: Matches where there is not a word boundary.
 \A: Matches only at the start of the string.
 \Z: Matches only at the end of the string or just before a newline at the end.
