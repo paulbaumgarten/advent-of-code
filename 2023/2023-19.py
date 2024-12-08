@@ -95,16 +95,100 @@ def part1():
             total += parts[i]["x"] + parts[i]["m"] + parts[i]["a"] + parts[i]["s"]
     print(total)
 
+def resolve_expression(workflows, exp):
+    if exp == "A" or exp == "R":
+        return exp
+    elif ":" in exp:
+        seperate = exp.find(":")
+        evaluation = exp[ : seperate ]
+        options = exp[ seperate+1 : ]
+        comma = options.find(",")
+        first = options[ : comma ]
+        second = options[ comma+1 : ]
+        return evaluation, resolve_expression(workflows,first), resolve_expression(workflows,second)
+    else: # We have a function name to result
+        exp = workflows[exp]
+        seperate = exp.find(":")
+        evaluation = exp[ : seperate ]
+        options = exp[ seperate+1 : ]
+        comma = options.find(",")
+        first = options[ : comma ]
+        second = options[ comma+1 : ]
+        return evaluation, resolve_expression(workflows,first), resolve_expression(workflows,second)
 
-class BT:
-    def __init__(self, label, val):
-        self.label = label
-        self.val = val
-        self.left = None
-        self.right = None
+def update_all_space(space, dimension, op, boundary, value ):
+    spaces = len(space)
+    i = 0
+    while i < spaces:
+        this_shape = space.pop(0)
+        if op == ">":
+            boundary += 1
+        if dimension=="x":
+            new_shapes = this_shape.split_shape_x(boundary)
+        elif dimension=="y":
+            new_shapes = this_shape.split_shape_y(boundary)
+        elif dimension=="z":
+            new_shapes = this_shape.split_shape_z(boundary)
+        elif dimension=="w":
+            new_shapes = this_shape.split_shape_w(boundary)
+        if len(new_shapes) == 2:
+            if op == "<":
+                new_shapes[0].value = value
+            elif op == ">":
+                new_shapes[1].value = value
+            space.append(new_shapes[0])
+            space.append(new_shapes[1])
+        else:
+            space.append(new_shapes[0])
+        i += 1
+    return space
 
-def build_tree(workflows, node):
-    for rule in node.val:
+def traverse_rules(rules, x1,x2,m1,m2,a1,a2,s1,s2):
+    total = 0
+    if rules == "A":
+        area = abs(x2-x1+1) * abs(m2-m1+1) * abs(a2-a1+1) * abs(s2-s1+1)
+        print(x1,x2,m1,m2,a1,a2,s1,s2," == > ",area,"ALLOWED")
+        return area
+    if rules == "R":
+        area = abs(x2-x1) * abs(m2-m1) * abs(a2-a1) * abs(s2-s1)
+        print(x1,x2,m1,m2,a1,a2,s1,s2," == > ",area,"REJECTED")
+        return 0
+    if len(rules) == 3:
+        #print(rules)
+        expression = rules[0]
+        variable = expression[0]
+        operator = expression[1]
+        v = int(expression[2:])
+        r1, r2, = rules[1], rules[2]
+        if operator == ">": # eg: m>2090
+            if variable == "x":
+                total += traverse_rules(r1, v+1,x2, m1,m2,  a1,a2,  s1,s2)
+                total += traverse_rules(r2, x1,v,   m1,m2,  a1,a2,  s1,s2)
+            if variable == "m":
+                total += traverse_rules(r1, x1,x2,  v+1,m2, a1,a2,  s1,s2)
+                total += traverse_rules(r2, x1,x2,  m1,v,   a1,a2,  s1,s2)
+            if variable == "a":
+                total += traverse_rules(r1, x1,x2,  m1,m2,  v+1,a2, s1,s2)
+                total += traverse_rules(r2, x1,x2,  m1,m2,  a1,v,   s1,s2)
+            if variable == "s":
+                total += traverse_rules(r1, x1,x2,  m1,m2,  a1,a2,  v+1,s2)
+                total += traverse_rules(r2, x1,x2,  m1,m2,  a1,a2,  s1,v)
+        else: # eg: s<1351
+            if variable == "x":
+                total += traverse_rules(r1, x1,v-1, m1,m2,  a1,a2,  s1,s2)
+                total += traverse_rules(r2, v,x2,   m1,m2,  a1,a2,  s1,s2)
+            if variable == "m":
+                total += traverse_rules(r1, x1,x2,  m1,v-1, a1,a2,  s1,s2)
+                total += traverse_rules(r2, x1,x2,  v,m2,   a1,a2,  s1,s2)
+            if variable == "a":
+                total += traverse_rules(r1, x1,x2,  m1,m2,  a1,v-1, s1,s2)
+                total += traverse_rules(r2, x1,x2,  m1,m2,  v,a2,   s1,s2)
+            if variable == "s": 
+                total += traverse_rules(r1, x1,x2,  m1,m2,  a1,a2,  s1,v-1)
+                total += traverse_rules(r2, x1,x2,  m1,m2,  a1,a2,  v,s2)
+        return total
+    print(rules, x1,x2,m1,m2,a1,a2,s1,s2, total)
+    raise Exception("What the hell am I doing here?")
 
 
 def part2():
@@ -113,34 +197,20 @@ def part2():
     #workflows_text,parts_text = TEST
     parts = []
     workflows = {}
-    # Parse parts data
-    for p in parts_text.split("\n"):
-        x,m,a,s = (p[1:])[:-1].split(",")
-        x = int(x[2:])
-        m = int(m[2:])
-        a = int(a[2:])
-        s = int(s[2:])
-        parts.append( { "x":x, "m": m, "a": a, "s":s } )
     # Parse workflows data
     for w in workflows_text.split("\n"):
         label, rules = w.split("{")
-        rules = rules[:-1].split(",")
-        ruleset = []
-        for r in rules:
-            if r.count(":") == 1: # Is this a rule to be calculated? or a default destination?
-                colon = r.index(":")
-                if "<" in r:
-                    operator = r.index("<")
-                else:
-                    operator = r.index(">")
-                ruleset.append(("calc", r[0:operator], r[operator], int(r[operator+1:colon]), r[colon+1:] ))
-            else:
-                ruleset.append(("goto",r))
-        workflows[label] = ruleset
-    # Create tree
-    root = BT("in", workflows["in"])
-    build_tree(workflows, root)
+        rules = rules[:-1]
+        workflows[label] = rules
+    for k,v in workflows.items():
+        print(k," => ",v)
     
+    rules = resolve_expression(workflows, "in")
+    print(rules)
+    print()
+    total = traverse_rules(rules, 1,4000,1,4000,1,4000,1,4000)
+    print("total",total)
+
 part1()
 part2()
 
