@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pico W Control Panel</title>
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        font-family: Arial, sans-serif;
+    }
+    button, input[type="text"] {
+        width: 80%;
+        padding: 15px;
+        margin: 10px;
+        font-size: 16px; /* Larger font size for better readability */
+    }
+    input[type="submit"] {
+        width: 84%;
+        padding: 15px;
+        margin: 10px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        font-size: 16px;
+    }
+    button:hover, input[type="submit"]:hover {
+        opacity: 0.8;
+    }
+</style>
+</head>
+<body>
+    <h1>Pico W Control Panel</h1>
+    <button onclick="location.href='/on'">Turn ON</button>
+    <button onclick="location.href='/off'">Turn OFF</button>
+    <form action="/setalarm" method="post">
+        <label for="time">Set alarm time:</label>
+        <input type="text" id="time" name="time">
+        <input type="submit" value="Set Alarm">
+    </form>
+</body>
+</html>
