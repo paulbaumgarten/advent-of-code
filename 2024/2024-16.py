@@ -24,7 +24,7 @@ EX1 = """###############
 #.###.#.#.#.#.#
 #S..#.....#...#
 ###############""".splitlines()
-# 7036
+# 7036, 45
 
 EX2 = """#################
 #...#...#...#..E#
@@ -43,7 +43,36 @@ EX2 = """#################
 #.#.#.#########.#
 #S#.............#
 #################""".splitlines()
-# 11048
+# 11048, 64
+
+EX3 = """###########################
+#######################..E#
+######################..#.#
+#####################..##.#
+####################..###.#
+###################..##...#
+##################..###.###
+#################..####...#
+################..#######.#
+###############..##.......#
+##############..###.#######
+#############..####.......#
+############..###########.#
+###########..##...........#
+##########..###.###########
+#########..####...........#
+########..###############.#
+#######..##...............#
+######..###.###############
+#####..####...............#
+####..###################.#
+###..##...................#
+##..###.###################
+#..####...................#
+#.#######################.#
+#S........................#
+###########################""".splitlines()
+# 21148, 149
 
 ### Today's problem
 
@@ -61,8 +90,8 @@ def show_grid(grid):
     for y in range(len(grid)):
         print(f"{y:02} ",end="")
         for x in range(0, len(grid[y])):
-            val = str(grid[y][x])
-            print(f"{ val.ljust(5," ") }",end=" ")
+            val = str(grid[y][x] // 1000)
+            print(f"{ val.ljust(3," ") }",end=" ")
         print()
     print()
 
@@ -72,11 +101,11 @@ def find_cheapest(grid, start, finish):
     costs = [[ math.inf for x in range(len(grid[0]))] for y in range(len(grid))]
     dir = [[ "x" for x in range(len(grid[0]))] for y in range(len(grid))]
     costs[y][x] = 0
-    dir[y][x] = "<"
+    dir[y][x] = ">"
     q = []
     q.append( [y,x] )
     routes = []
-    current_dir = "<"
+    current_dir = ">"
     current_cost = 0
     while len(q) > 0:
         y,x = q.pop(0)
@@ -97,12 +126,12 @@ def find_cheapest(grid, start, finish):
                     costs[y2][x2] = costs[y][x] + this_cost
                     dir[y2][x2] = k
                     q.append([y2,x2])
-    #show_grid(costs)
+    show_grid(costs)
     return costs[finish[0]][finish[1]]
     return None
 
 def part1(raw):
-    data = EX1[:]
+    data = EX3[:]
     data = raw[:]
     grid = [list(line) for line in data]
     start = locate_char(grid, "S")
