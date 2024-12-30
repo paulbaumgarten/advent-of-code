@@ -128,16 +128,101 @@ def part2(raw):
     reg_c = int(data[2][12:])
     prog_str = data[4][9:]
     prog = [int(n) for n in data[4][9:].split(",")]
-    a = 0
+    # a = 128600000
+    a = 109019476330651
+    p = Program(prog, a, reg_b, reg_c, False)
+    p.execute()
+    print(p.get_outputs())
+    a = 109019473641472
     while True:
-        if a % 100000 == 0:
-            print("A:",a)
         p = Program(prog, a, reg_b, reg_c, False)
         p.execute()
-        if p.get_outputs() == prog_str:
-            print(f"The required value for A is {a}")
+        if a % 100000 == 0:
+            print("A:",a,"=>",p.get_outputs())
+        if p.get_outputs() == "2,4,1,5,7,5,0,3,4,0,1,6,5,5,3,0":
+            print(f"The required value for A is {a} => {p.get_outputs()}")
             return a
         a += 1
+
+def run(a):
+    # 2,4 b = a % 8
+    # 1,5 b = b ^ 5
+    # 7,5 c = a // 2**b
+    # 0,3 a = a // 2**3 
+    # 4,0 b = b ^ c
+    # 1,6 b = b ^ 6
+    # 5,5 output b % 8
+    # 3,0 return to start if a!=0
+    b = a % 8
+    b = b ^ 5
+    c = a // 2**b
+    a = a // 2**3 
+    b = b ^ c
+    b = b ^ 6
+    print(b % 8)
+    return a != 0
+"""
+if __name__=="__main__":
+    for i in range(0,8*8):
+        #print("i",i, "a!=0?",run(i))
+        p = Program([2,4,1,5,7,5,0,3,4,0,1,6,5,5,3,0], i, 0, 0, False)
+        p.execute()
+        print(p.get_outputs())
+
+2,4,1,5
+2203
+100 010 011 011
+100010011011
+
+2,4,1,5,7,5,0,3,
+4,0,1,6,5,5,3,0
+
+7,5,0,3
+2649
+101 001 011 001 
+101001011001
+
+4,0,1,6
+
+5,5,3,0
+1538
+
+4,0,1,6,5,5,3,0
+6498067
+011000110010011100010011
+011 000 110 010 011 100 010 011
+
+bin(2649)+bin(2203)
+int("101001011001100010011011",base=2)
+10852507
+
+011000110010011100010011 101001011001100010011011
+011000110010011100010011000000000000000000000000
+011000110010011100010011101001011001100010011011
+109019484493979
+
+The required value for A is 12093850 => 2,4,1,5,7,5,0,3
+Part 2 result: 12093850
+
+109019473641472
+
+"""
+
+"""
+run 0=> 3
+    1   2
+    2   1
+    3   0
+    4   5
+    5   3
+    6   5
+    7   5
+
+
+2,4,1,5,7,5,0,3,4,0,1,6,5,5,3,0
+
+1,
+"""
 
 if __name__=="__main__":
     start = time.time()
@@ -148,5 +233,24 @@ if __name__=="__main__":
         print("Part 2 result:",result)
     finish = time.time()
     print(f"Time taken: {(finish-start):.2f} seconds")
+"""
 
+# 128 600 000
+
+Register A: 46187030
+Register B: 0
+Register C: 0
+
+Program: 2,4,1,5,7,5,0,3,4,0,1,6,5,5,3,0
+
+2,4 b = a % 8
+1,5 b = b ^ 5
+7,5 c = a // 2**b
+0,3 a = a // 2**3 
+4,0 b = b ^ c
+1,6 b = b ^ 6
+5,5 output b % 8
+3,0 return to start if a!=0
+
+"""
 
