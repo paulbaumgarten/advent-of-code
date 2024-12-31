@@ -63,6 +63,31 @@ def is_possible(patterns, design):
         #print(x,"=>",reachable)
     return False
 
+def count_solutions(patterns, design):
+    timer = time.time()
+    match_at = {}
+    for i in range(0, len(design)):
+        match_at[i] = []
+    if design == "": return True
+    if design in patterns: return True
+    max_pattern_len = 0
+    for i in range(0, len(patterns)):
+        if len(patterns[i]) > max_pattern_len:
+            max_pattern_len = len(patterns[i])
+        for j in range(0, len(design)):
+            if design[j:j+len(patterns[i])] == patterns[i]:
+                match_at[j].append(len(patterns[i]))
+    #print(match_at)
+    solutions = [0] * (len(design)+1)
+    solutions[0] = 1
+    for i in range(len(design)):
+        #print(solutions)
+        for j in range(len(match_at[i])):
+            val = match_at[i][j]
+            solutions[i+val] += solutions[i]
+    #print(solutions)
+    return solutions[-1]
+
 def part1(raw):
     data = EX[:]
     data = raw[:]
@@ -85,7 +110,13 @@ def part1(raw):
 def part2(raw, designs, patterns):
     print(f"patterns: {len(patterns)}")
     print(f"designs : {len(designs)}")
-    pass
+    total = 0
+    for i in range(0, len(designs)):
+        print(f"Design {i} {designs[i]}...",end="")
+        solutions = count_solutions(patterns, designs[i])
+        print(solutions)
+        total += solutions
+    return(total)
 
 if __name__=="__main__":
     start = time.time()
