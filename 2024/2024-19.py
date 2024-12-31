@@ -22,7 +22,7 @@ def get_data():
 
 ### Today's problem
 
-def is_possible(patterns, design):
+def is_possible1(patterns, design):
     #print("  design",design)
     if design == "": return True
     if design in patterns: return True
@@ -34,12 +34,42 @@ def is_possible(patterns, design):
                 return True
     return False
 
+def is_possible(patterns, design):
+    timer = time.time()
+    match_at = {}
+    for i in range(0, len(design)):
+        match_at[i] = []
+    if design == "": return True
+    if design in patterns: return True
+    max_pattern_len = 0
+    for i in range(0, len(patterns)):
+        if len(patterns[i]) > max_pattern_len:
+            max_pattern_len = len(patterns[i])
+        for j in range(0, len(design)):
+            if design[j:j+len(patterns[i])] == patterns[i]:
+                if len(patterns[i]) not in match_at[j]:
+                    match_at[j].append(len(patterns[i]))
+    #print(match_at)
+    reachable = [0]
+    start_from = 0
+    for x in range(len(design)):
+        for val in reachable:
+            can_go_to_list = match_at[val]
+            for can_go_to in can_go_to_list:
+                if val+can_go_to not in reachable:
+                    reachable.append(val+can_go_to)
+                    if val+can_go_to == len(design):
+                        return True
+        #print(x,"=>",reachable)
+    return False
+
 def part1(raw):
     data = EX[:]
     data = raw[:]
     patterns = data[0].split(", ")
     designs = data[2:]
     possible = 0
+    possible_designs = []
     print(f"patterns: {len(patterns)}")
     print(f"designs : {len(designs)}")
     for i in range(0, len(designs)):
@@ -47,19 +77,22 @@ def part1(raw):
         if is_possible(patterns, designs[i]):
             possible += 1
             print("possible")
+            possible_designs.append(designs[i])
         else:
             print("not possible")
-    return possible
+    return possible, possible_designs, patterns
 
-def part2(raw):
+def part2(raw, designs, patterns):
+    print(f"patterns: {len(patterns)}")
+    print(f"designs : {len(designs)}")
     pass
 
 if __name__=="__main__":
     start = time.time()
-    result = part1(get_data())
+    result, possible_designs, patterns = part1(get_data())
     print(f"Part 1 result:",result)
     if result:
-        result = part2(get_data())
+        result = part2(get_data(), possible_designs, patterns)
         print("Part 2 result:",result)
     finish = time.time()
     print(f"Time taken: {(finish-start):.2f} seconds")
