@@ -125,7 +125,7 @@ def part1(raw):
 
 def part2(raw):
     data = EX1[:]
-    #data = raw[:]
+    data = raw[:]
     grid = [list(line) for line in data]
     start = find_char(grid, "S")
     finish = find_char(grid, "E")
